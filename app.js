@@ -1,6 +1,50 @@
 // Dashboard App
+(function() {
+    const PASS_HASH = '69a82982c9bf8c7670629ebfda7a14fb245b9c52306dc67e9969a27f627e50a5'; // sha256 of password
+    
+    function sha256(str) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        return crypto.subtle.digest('SHA-256', data).then(hash => {
+            return Array.from(new Uint8Array(hash))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        });
+    }
+    
+    async function checkAuth() {
+        const stored = sessionStorage.getItem('tony_auth');
+        if (stored === PASS_HASH) {
+            document.body.style.display = 'block';
+            return true;
+        }
+        
+        const pass = prompt('🔒 Пароль для доступа:');
+        if (!pass) {
+            document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;color:#8b949e;font-family:Inter,sans-serif;">Доступ запрещён</div>';
+            document.body.style.display = 'block';
+            return false;
+        }
+        
+        const hash = await sha256(pass);
+        if (hash === PASS_HASH) {
+            sessionStorage.setItem('tony_auth', hash);
+            document.body.style.display = 'block';
+            return true;
+        } else {
+            document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;color:#f85149;font-family:Inter,sans-serif;">Неверный пароль</div>';
+            document.body.style.display = 'block';
+            return false;
+        }
+    }
+    
+    checkAuth().then(ok => {
+        if (ok) updateDashboard();
+    });
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
-    updateDashboard();
+    // Auth handles initial load
 });
 
 function updateDashboard() {
