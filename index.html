@@ -1,181 +1,187 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tony Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tony Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body style="display:none;">
-    <div class="container">
-        <header>
-            <div class="logo">🧠 Tony</div>
-            <div class="status">
-                <span class="status-dot online"></span>
-                <span id="status-text">Online</span>
-            </div>
-        </header>
+  <div class="bg"></div>
 
-        <section class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">📅</div>
-                <div class="stat-content">
-                    <div class="stat-value" id="days-active">1</div>
-                    <div class="stat-label">Дней работы</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🤖</div>
-                <div class="stat-content">
-                    <div class="stat-value" id="tasks-done">7</div>
-                    <div class="stat-label">Задач выполнено</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🔄</div>
-                <div class="stat-content">
-                    <div class="stat-value" id="subagents">3</div>
-                    <div class="stat-label">Субагентов запущено</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">⏰</div>
-                <div class="stat-content">
-                    <div class="stat-value" id="cron-jobs">1</div>
-                    <div class="stat-label">Cron jobs</div>
-                </div>
-            </div>
-        </section>
+  <div class="container">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">🧠</div>
+        <div class="brand-text">
+          <div class="brand-title">Tony Dashboard</div>
+          <div class="brand-sub">Kanban • Максим ↔ Тони</div>
+        </div>
+      </div>
 
-        <section class="kanban">
-            <div class="kanban-column waiting">
-                <h2>🔴 Ждёт от Макса</h2>
-                <div class="tasks" id="waiting-tasks">
-                    <div class="task-card">
-                        <div class="task-title">Рассказать про приложения</div>
-                        <div class="task-desc">Какие приложения уже есть / в процессе для финансовой цели</div>
-                    </div>
-                    <div class="task-card">
-                        <div class="task-title">Выбрать интеграции</div>
-                        <div class="task-desc">Решить что подключить: gog, calendar, etc.</div>
-                    </div>
-                </div>
-            </div>
-            <div class="kanban-column planned">
-                <h2>🟡 Tony планирует</h2>
-                <div class="tasks" id="planned-tasks">
-                    <div class="task-card">
-                        <div class="task-title">Настроить heartbeat</div>
-                        <div class="task-desc">Когда Макс одобрит периодические проверки</div>
-                    </div>
-                    <div class="task-card">
-                        <div class="task-title">Стратегия $1K/мес</div>
-                        <div class="task-desc">Помочь со стратегией достижения финансовой цели</div>
-                    </div>
-                </div>
-            </div>
-            <div class="kanban-column done">
-                <h2>✅ Сделано</h2>
-                <div class="tasks" id="done-tasks">
-                    <div class="task-card completed">
-                        <div class="task-title">Notion интеграция</div>
-                        <div class="task-meta">2026-01-31</div>
-                    </div>
-                    <div class="task-card completed">
-                        <div class="task-title">Настройки Tony записаны</div>
-                        <div class="task-meta">2026-01-31</div>
-                    </div>
-                    <div class="task-card completed">
-                        <div class="task-title">Mac sleep отключён</div>
-                        <div class="task-meta">2026-01-31</div>
-                    </div>
-                    <div class="task-card completed">
-                        <div class="task-title">Security audit</div>
-                        <div class="task-meta">2026-02-01</div>
-                    </div>
-                    <div class="task-card completed">
-                        <div class="task-title">Security Monitor настроен</div>
-                        <div class="task-meta">2026-02-01</div>
-                    </div>
-                    <div class="task-card completed">
-                        <div class="task-title">Ресёрч оптимизации токенов</div>
-                        <div class="task-meta">2026-02-01</div>
-                    </div>
-                    <div class="task-card completed">
-                        <div class="task-title">Ресёрч возможностей OpenClaw</div>
-                        <div class="task-meta">2026-02-01</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+      <div class="topbar-right">
+        <div class="pill" id="sync-pill" title="Данные берутся из data/tasks.json. Изменения в браузере сохраняются локально (localStorage).">
+          <span class="dot ok"></span>
+          <span class="pill-text">Sync: file + local</span>
+        </div>
 
-        <section class="activity-log">
-            <h2>📝 Лог активности</h2>
-            <div class="log-entries" id="activity-log">
-                <div class="log-entry">
-                    <span class="log-time">2026-02-01 00:24</span>
-                    <span class="log-text">Настройка GitHub и создание дашборда</span>
-                </div>
-                <div class="log-entry">
-                    <span class="log-time">2026-02-01 00:11</span>
-                    <span class="log-text">Создана доска прозрачности в Notion</span>
-                </div>
-                <div class="log-entry">
-                    <span class="log-time">2026-02-01 00:04</span>
-                    <span class="log-text">Security audit + настройка мониторинга</span>
-                </div>
-                <div class="log-entry">
-                    <span class="log-time">2026-01-31 23:26</span>
-                    <span class="log-text">Подключён Notion, создана структура HQ</span>
-                </div>
-                <div class="log-entry">
-                    <span class="log-time">2026-01-31 22:30</span>
-                    <span class="log-text">🎉 Первое пробуждение Tony. Получена миссия.</span>
-                </div>
-            </div>
-        </section>
+        <button class="btn ghost" id="btn-export" title="Скачать текущие задачи (JSON)">Export</button>
+        <button class="btn" id="btn-new">+ Task</button>
+      </div>
+    </header>
 
-        <section class="goal-section">
-            <h2>🎯 Главная цель</h2>
-            <div class="goal-card">
-                <div class="goal-header">
-                    <span class="goal-title">Финансовая независимость через Vibe Coding</span>
-                    <span class="goal-badge">В процессе</span>
-                </div>
-                <div class="goal-milestones">
-                    <div class="milestone">
-                        <div class="milestone-header">
-                            <span>Milestone 1: $1,000/мес</span>
-                            <span class="milestone-deadline">май-июнь 2026</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: 5%"></div>
-                        </div>
-                        <div class="milestone-status">$0 / $1,000</div>
-                    </div>
-                    <div class="milestone future">
-                        <div class="milestone-header">
-                            <span>Финальная цель: $10,000/мес</span>
-                            <span class="milestone-deadline">TBD</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: 0%"></div>
-                        </div>
-                        <div class="milestone-status">$0 / $10,000</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <section class="toolbar">
+      <div class="search">
+        <input id="q" class="input" placeholder="Поиск по задачам…" />
+      </div>
 
-        <footer>
-            <p>Последнее обновление: <span id="last-update">2026-02-01 00:24</span></p>
-            <p class="footer-note">Tony — куратор персональной операционной системы</p>
-        </footer>
+      <div class="filters">
+        <select id="owner" class="select">
+          <option value="all">Owner: все</option>
+          <option value="Макс">Макс</option>
+          <option value="Тони">Тони</option>
+        </select>
+
+        <select id="priority" class="select">
+          <option value="all">Priority: все</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+        </select>
+
+        <select id="tag" class="select">
+          <option value="all">Tag: все</option>
+        </select>
+      </div>
+
+      <div class="meta" id="meta">—</div>
+    </section>
+
+    <section class="board" aria-label="Kanban board">
+      <div class="col" data-status="backlog">
+        <div class="col-head">
+          <div>
+            <div class="col-title">Backlog</div>
+            <div class="col-sub">Идеи и задачи, не взятые в работу</div>
+          </div>
+          <div class="badge" id="count-backlog">0</div>
+        </div>
+        <div class="col-body" id="col-backlog" aria-label="Backlog"></div>
+      </div>
+
+      <div class="col" data-status="in_progress">
+        <div class="col-head">
+          <div>
+            <div class="col-title">In progress</div>
+            <div class="col-sub">В работе сейчас</div>
+          </div>
+          <div class="badge" id="count-in_progress">0</div>
+        </div>
+        <div class="col-body" id="col-in_progress" aria-label="In progress"></div>
+      </div>
+
+      <div class="col" data-status="blocked">
+        <div class="col-head">
+          <div>
+            <div class="col-title">Blocked</div>
+            <div class="col-sub">Нужен ответ/ресурс/решение</div>
+          </div>
+          <div class="badge" id="count-blocked">0</div>
+        </div>
+        <div class="col-body" id="col-blocked" aria-label="Blocked"></div>
+      </div>
+
+      <div class="col" data-status="done">
+        <div class="col-head">
+          <div>
+            <div class="col-title">Done</div>
+            <div class="col-sub">Готово</div>
+          </div>
+          <div class="badge" id="count-done">0</div>
+        </div>
+        <div class="col-body" id="col-done" aria-label="Done"></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span class="muted">Источник:</span> <code>data/tasks.json</code>
+        <span class="dot-sep">•</span>
+        <span class="muted">Локальные изменения:</span> <code>localStorage</code>
+      </div>
+      <div class="footer-right">
+        <span class="muted">Подсказка:</span> перетаскивай карточки между колонками.
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close="true"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div>
+          <div class="modal-title" id="modalTitle">Новая задача</div>
+          <div class="modal-sub">Быстро добавь карточку. Сохранится локально (export чтобы зафиксировать в репо).</div>
+        </div>
+        <button class="icon-btn" data-close="true" aria-label="Закрыть">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="grid">
+          <label class="field">
+            <span class="label">Title</span>
+            <input class="input" id="f-title" placeholder="Например: Пэйволл v1" />
+          </label>
+
+          <label class="field">
+            <span class="label">Owner</span>
+            <select class="select" id="f-owner">
+              <option>Макс</option>
+              <option>Тони</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="label">Priority</span>
+            <select class="select" id="f-priority">
+              <option>A</option>
+              <option selected>B</option>
+              <option>C</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="label">Status</span>
+            <select class="select" id="f-status">
+              <option value="backlog">Backlog</option>
+              <option value="in_progress">In progress</option>
+              <option value="blocked">Blocked</option>
+              <option value="done">Done</option>
+            </select>
+          </label>
+
+          <label class="field span2">
+            <span class="label">Description</span>
+            <textarea class="textarea" id="f-desc" placeholder="Критерий готовности / что на выходе"></textarea>
+          </label>
+
+          <label class="field span2">
+            <span class="label">Tags (через запятую)</span>
+            <input class="input" id="f-tags" placeholder="padel, money" />
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button class="btn ghost" data-close="true">Cancel</button>
+        <button class="btn" id="btn-save">Save</button>
+      </div>
     </div>
+  </div>
 
-    <script src="data.js"></script>
-    <script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
