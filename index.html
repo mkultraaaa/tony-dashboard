@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tony Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body style="display:none;">
@@ -17,24 +17,32 @@
         <div class="brand-mark">🧠</div>
         <div class="brand-text">
           <div class="brand-title">Tony Dashboard</div>
-          <div class="brand-sub">Kanban • Максим ↔ Тони</div>
+          <div class="brand-sub">Second Brain • Макс ↔ Тони</div>
         </div>
       </div>
 
       <div class="topbar-right">
-        <div class="pill" id="sync-pill" title="Данные берутся из data/tasks.json. Изменения в браузере сохраняются локально (localStorage).">
-          <span class="dot ok"></span>
-          <span class="pill-text">Sync: file + local</span>
+        <div class="pill" id="vault-pill" title="Хранилище (vault): данные шифруются в браузере.">
+          <span class="dot ok" id="vault-dot"></span>
+          <span class="pill-text" id="vault-text">Vault: locked</span>
         </div>
 
-        <button class="btn ghost" id="btn-export" title="Скачать текущие задачи (JSON)">Export</button>
+        <button class="btn ghost" id="btn-import" title="Импортировать JSON (заменит данные в vault)">Import</button>
+        <button class="btn ghost" id="btn-export" title="Экспортировать всё (JSON)">Export</button>
         <button class="btn" id="btn-new">+ Task</button>
       </div>
     </header>
 
-    <section class="toolbar">
+    <nav class="tabs" aria-label="Навигация">
+      <button class="tab active" data-tab="tasks">Tasks</button>
+      <button class="tab" data-tab="knowledge">Knowledge</button>
+      <button class="tab" data-tab="activity">Activity</button>
+      <button class="tab" data-tab="goals">Goals</button>
+    </nav>
+
+    <section class="toolbar" id="toolbar">
       <div class="search">
-        <input id="q" class="input" placeholder="Поиск по задачам…" />
+        <input id="q" class="input" placeholder="Поиск…" />
       </div>
 
       <div class="filters">
@@ -59,126 +67,144 @@
       <div class="meta" id="meta">—</div>
     </section>
 
-    <section class="board" aria-label="Kanban board">
-      <div class="col" data-status="backlog">
-        <div class="col-head">
-          <div>
-            <div class="col-title">Backlog</div>
-            <div class="col-sub">Идеи и задачи, не взятые в работу</div>
+    <!-- TASKS -->
+    <section class="view" id="view-tasks" data-view="tasks">
+      <section class="board" aria-label="Kanban board">
+        <div class="col" data-status="backlog">
+          <div class="col-head">
+            <div>
+              <div class="col-title">Backlog</div>
+              <div class="col-sub">Идеи и задачи, не взятые в работу</div>
+            </div>
+            <div class="badge" id="count-backlog">0</div>
           </div>
-          <div class="badge" id="count-backlog">0</div>
+          <div class="col-body" id="col-backlog" aria-label="Backlog"></div>
         </div>
-        <div class="col-body" id="col-backlog" aria-label="Backlog"></div>
-      </div>
 
-      <div class="col" data-status="in_progress">
-        <div class="col-head">
-          <div>
-            <div class="col-title">In progress</div>
-            <div class="col-sub">В работе сейчас</div>
+        <div class="col" data-status="in_progress">
+          <div class="col-head">
+            <div>
+              <div class="col-title">In progress</div>
+              <div class="col-sub">В работе сейчас</div>
+            </div>
+            <div class="badge" id="count-in_progress">0</div>
           </div>
-          <div class="badge" id="count-in_progress">0</div>
+          <div class="col-body" id="col-in_progress" aria-label="In progress"></div>
         </div>
-        <div class="col-body" id="col-in_progress" aria-label="In progress"></div>
-      </div>
 
-      <div class="col" data-status="blocked">
-        <div class="col-head">
-          <div>
-            <div class="col-title">Blocked</div>
-            <div class="col-sub">Нужен ответ/ресурс/решение</div>
+        <div class="col" data-status="blocked">
+          <div class="col-head">
+            <div>
+              <div class="col-title">Blocked</div>
+              <div class="col-sub">Нужен ответ/ресурс/решение</div>
+            </div>
+            <div class="badge" id="count-blocked">0</div>
           </div>
-          <div class="badge" id="count-blocked">0</div>
+          <div class="col-body" id="col-blocked" aria-label="Blocked"></div>
         </div>
-        <div class="col-body" id="col-blocked" aria-label="Blocked"></div>
-      </div>
 
-      <div class="col" data-status="done">
-        <div class="col-head">
-          <div>
-            <div class="col-title">Done</div>
-            <div class="col-sub">Готово</div>
+        <div class="col" data-status="done">
+          <div class="col-head">
+            <div>
+              <div class="col-title">Done</div>
+              <div class="col-sub">Готово</div>
+            </div>
+            <div class="badge" id="count-done">0</div>
           </div>
-          <div class="badge" id="count-done">0</div>
+          <div class="col-body" id="col-done" aria-label="Done"></div>
         </div>
-        <div class="col-body" id="col-done" aria-label="Done"></div>
+      </section>
+    </section>
+
+    <!-- KNOWLEDGE -->
+    <section class="view" id="view-knowledge" data-view="knowledge" style="display:none;">
+      <div class="k-layout">
+        <aside class="k-sidebar">
+          <div class="k-head">
+            <div>
+              <div class="k-title">Pages</div>
+              <div class="k-sub">Заметки и контекст</div>
+            </div>
+            <button class="btn ghost" id="btn-new-note">+ Page</button>
+          </div>
+          <div class="k-list" id="k-list"></div>
+        </aside>
+
+        <main class="k-main">
+          <div class="k-main-head">
+            <div>
+              <div class="k-main-title" id="k-title">—</div>
+              <div class="k-main-meta" id="k-meta">—</div>
+            </div>
+            <div class="k-actions">
+              <button class="btn ghost" id="btn-edit-note">Edit</button>
+              <button class="btn ghost" id="btn-delete-note">Delete</button>
+            </div>
+          </div>
+
+          <div class="k-content" id="k-content"></div>
+        </main>
+      </div>
+    </section>
+
+    <!-- ACTIVITY -->
+    <section class="view" id="view-activity" data-view="activity" style="display:none;">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Activity</div>
+            <div class="panel-sub">Лента действий (автоматически)</div>
+          </div>
+          <button class="btn ghost" id="btn-clear-activity">Clear</button>
+        </div>
+        <div class="activity" id="activity"></div>
+      </div>
+    </section>
+
+    <!-- GOALS -->
+    <section class="view" id="view-goals" data-view="goals" style="display:none;">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Goals</div>
+            <div class="panel-sub">Цели и прогресс (MVP)</div>
+          </div>
+          <button class="btn ghost" id="btn-edit-goals">Edit</button>
+        </div>
+
+        <div class="goals" id="goals"></div>
       </div>
     </section>
 
     <footer class="footer">
       <div class="footer-left">
-        <span class="muted">Источник:</span> <code>data/tasks.json</code>
+        <span class="muted">Seed:</span> <code>data/tasks.json</code>
         <span class="dot-sep">•</span>
-        <span class="muted">Локальные изменения:</span> <code>localStorage</code>
+        <span class="muted">Vault:</span> <code>encrypted localStorage</code>
       </div>
       <div class="footer-right">
-        <span class="muted">Подсказка:</span> перетаскивай карточки между колонками.
+        <span class="muted">Подсказка:</span> Ctrl/Cmd+K = фокус на поиск.
       </div>
     </footer>
   </div>
 
-  <!-- Modal -->
+  <input id="file" type="file" accept="application/json" style="display:none" />
+
+  <!-- Modal (shared) -->
   <div class="modal" id="modal" aria-hidden="true">
     <div class="modal-backdrop" data-close="true"></div>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-head">
         <div>
-          <div class="modal-title" id="modalTitle">Новая задача</div>
-          <div class="modal-sub">Быстро добавь карточку. Сохранится локально (export чтобы зафиксировать в репо).</div>
+          <div class="modal-title" id="modalTitle">—</div>
+          <div class="modal-sub" id="modalSub">—</div>
         </div>
         <button class="icon-btn" data-close="true" aria-label="Закрыть">✕</button>
       </div>
 
-      <div class="modal-body">
-        <div class="grid">
-          <label class="field">
-            <span class="label">Title</span>
-            <input class="input" id="f-title" placeholder="Например: Пэйволл v1" />
-          </label>
+      <div class="modal-body" id="modalBody"></div>
 
-          <label class="field">
-            <span class="label">Owner</span>
-            <select class="select" id="f-owner">
-              <option>Макс</option>
-              <option>Тони</option>
-            </select>
-          </label>
-
-          <label class="field">
-            <span class="label">Priority</span>
-            <select class="select" id="f-priority">
-              <option>A</option>
-              <option selected>B</option>
-              <option>C</option>
-            </select>
-          </label>
-
-          <label class="field">
-            <span class="label">Status</span>
-            <select class="select" id="f-status">
-              <option value="backlog">Backlog</option>
-              <option value="in_progress">In progress</option>
-              <option value="blocked">Blocked</option>
-              <option value="done">Done</option>
-            </select>
-          </label>
-
-          <label class="field span2">
-            <span class="label">Description</span>
-            <textarea class="textarea" id="f-desc" placeholder="Критерий готовности / что на выходе"></textarea>
-          </label>
-
-          <label class="field span2">
-            <span class="label">Tags (через запятую)</span>
-            <input class="input" id="f-tags" placeholder="padel, money" />
-          </label>
-        </div>
-      </div>
-
-      <div class="modal-foot">
-        <button class="btn ghost" data-close="true">Cancel</button>
-        <button class="btn" id="btn-save">Save</button>
-      </div>
+      <div class="modal-foot" id="modalFoot"></div>
     </div>
   </div>
 
